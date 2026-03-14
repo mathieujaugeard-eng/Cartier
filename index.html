@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <meta name="apple-mobile-web-app-title" content="Santos"/>
+  <meta name="theme-color" content="#1a3a2a"/>
+  <title>Santos · Objectif</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Josefin+Sans:wght@300;400&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green-deep: #1a3a2a;
+      --green-mid: #2d5a3d;
+      --green-dial: #2e5940;
+      --green-light: #4a8860;
+      --green-pale: #c8ddd0;
+      --silver: #c8c8c8;
+      --silver-bright: #e8e8e8;
+      --silver-dark: #8a8a8a;
+      --bg: #f5f2ec;
+      --bg2: #ede9e1;
+      --text: #1a1a18;
+      --text2: #6a6760;
+      --text3: #9a9890;
+      --border: rgba(0,0,0,0.10);
+      --border2: rgba(0,0,0,0.18);
+      --card: #ffffff;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #111410;
+        --bg2: #1a1d18;
+        --text: #e8e4dc;
+        --text2: #8a8880;
+        --text3: #5a5850;
+        --border: rgba(255,255,255,0.08);
+        --border2: rgba(255,255,255,0.14);
+        --card: #1e2119;
+      }
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Josefin Sans', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .app {
+      max-width: 420px;
+      margin: 0 auto;
+      padding: env(safe-area-inset-top, 16px) 16px calc(env(safe-area-inset-bottom, 0px) + 24px);
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    .watch-header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px 0 16px;
+    }
+
+    .watch-face-svg {
+      width: 150px;
+      height: 150px;
+      margin-bottom: 12px;
+      filter: drop-shadow(0 6px 18px rgba(0,0,0,0.30));
+    }
+
+    .watch-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px;
+      font-weight: 400;
+      letter-spacing: 0.14em;
+      color: var(--text);
+      text-transform: uppercase;
+      text-align: center;
+    }
+
+    .watch-ref {
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      color: var(--text3);
+      text-align: center;
+      margin-top: 3px;
+      text-transform: uppercase;
+    }
+
+    /* ── Section titles ── */
+    .section-title {
+      font-size: 10px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--text3);
+      margin-bottom: 10px;
+      padding-bottom: 6px;
+      border-bottom: 0.5px solid var(--border);
+    }
+
+    /* ── Screws row ── */
+    .screws-row {
+      display: flex;
+      justify-content: space-between;
+      margin: 10px 4px;
+    }
+
+    .screw {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      border: 0.5px solid var(--border2);
+      background: var(--bg2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .screw::after {
+      content: '';
+      display: block;
+      width: 6px;
+      height: 0.5px;
+      background: var(--text3);
+      transform: rotate(45deg);
+    }
+
+    /* ── Progress ── */
+    .progress-section { margin-bottom: 14px; }
+
+    .progress-bezel {
+      background: var(--card);
+      border-radius: 14px;
+      border: 0.5px solid var(--border);
+      padding: 16px 18px;
+    }
+
+    .progress-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .progress-label {
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text2);
+    }
+
+    .progress-pct {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 32px;
+      font-weight: 500;
+      color: var(--text);
+      line-height: 1;
+    }
+
+    .progress-bar-track {
+      height: 6px;
+      background: var(--bg2);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #2d5a3d, #5aaa78);
+      border-radius: 3px;
+      transition: width 0.7s cubic-bezier(.4,0,.2,1);
+    }
+
+    .progress-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+
+    .prog-amount {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 20px;
+      color: var(--text);
+    }
+
+    .prog-remain {
+      font-size: 12px;
+      color: var(--text2);
+    }
+
+    /* ── Wallets ── */
+    .wallets-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .wallet-card {
+      background: var(--card);
+      border: 0.5px solid var(--border);
+      border-radius: 14px;
+      padding: 14px 16px;
+    }
+
+    .wallet-card.revolut { border-left: 3px solid #00C6E0; }
+    .wallet-card.cash { border-left: 3px solid #4a8860; }
+
+    .wallet-icon {
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text3);
+      margin-bottom: 6px;
+    }
+
+    .wallet-amount {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 26px;
+      font-weight: 500;
+      color: var(--text);
+      line-height: 1;
+    }
+
+    .wallet-subtitle {
+      font-size: 11px;
+      color: var(--text3);
+      margin-top: 4px;
+    }
+
+    /* ── ETA ── */
+    .eta-badge {
+      text-align: center;
+      background: var(--card);
+      border: 0.5px solid var(--border);
+      border-radius: 14px;
+      padding: 14px 16px;
+      margin-bottom: 14px;
+    }
+
+    .eta-label {
+      font-size: 10px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--text3);
+      margin-bottom: 5px;
+    }
+
+    .eta-value {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px;
+      color: var(--text);
+    }
+
+    /* ── Input section ── */
+    .input-section { margin-bottom: 14px; }
+
+    .input-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .input-label {
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text2);
+      width: 72px;
+      flex-shrink: 0;
+    }
+
+    input[type="number"] {
+      flex: 1;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 20px;
+      background: var(--card);
+      border: 0.5px solid var(--border2);
+      border-radius: 10px;
+      padding: 10px 14px;
+      color: var(--text);
+      outline: none;
+      -webkit-appearance: none;
+      min-width: 0;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    input[type="number"]:focus {
+      border-color: #4a8860;
+      box-shadow: 0 0 0 3px rgba(74,136,96,0.18);
+    }
+
+    .add-btn {
+      width: 100%;
+      padding: 14px;
+      background: var(--green-mid);
+      color: var(--green-pale);
+      border: none;
+      border-radius: 12px;
+      font-family: 'Josefin Sans', sans-serif;
+      font-size: 12px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .add-btn:active {
+      background: var(--green-deep);
+      transform: scale(0.98);
+    }
+
+    /* ── Target ── */
+    .target-section { margin-bottom: 14px; }
+
+    .target-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .set-btn {
+      padding: 10px 14px;
+      background: transparent;
+      color: var(--text2);
+      border: 0.5px solid var(--border2);
+      border-radius: 10px;
+      font-family: 'Josefin Sans', sans-serif;
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      cursor: pointer;
+      white-space: nowrap;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .set-btn:active { background: var(--bg2); }
+
+    /* ── History ── */
+    .history-section { margin-bottom: 14px; }
+
+    .history-list {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .history-item {
+      background: var(--card);
+      border: 0.5px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 14px;
+    }
+
+    .history-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+
+    .history-date {
+      font-size: 11px;
+      color: var(--text3);
+      letter-spacing: 0.05em;
+    }
+
+    .delete-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--text3);
+      font-size: 18px;
+      line-height: 1;
+      padding: 0 2px;
+      -webkit-tap-highlight-color: transparent;
+      transition: color 0.15s;
+    }
+
+    .delete-btn:active { color: #c0392b; }
+
+    .history-line {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 3px 0;
+    }
+
+    .history-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .history-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .dot-revolut { background: #00C6E0; }
+    .dot-cash { background: #4a8860; }
+
+    .history-desc {
+      font-size: 13px;
+      color: var(--text);
+    }
+
+    .history-amount {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 17px;
+      color: var(--text);
+    }
+
+    .no-history {
+      text-align: center;
+      font-size: 13px;
+      color: var(--text3);
+      font-style: italic;
+      padding: 16px 0;
+      letter-spacing: 0.05em;
+    }
+
+    /* ── Motto ── */
+    .motto {
+      text-align: center;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 14px;
+      font-style: italic;
+      color: var(--text3);
+      letter-spacing: 0.04em;
+      padding: 14px 8px 4px;
+      border-top: 0.5px solid var(--border);
+      transition: opacity 0.4s;
+      line-height: 1.6;
+    }
+
+    /* ── Toast ── */
+    .toast {
+      position: fixed;
+      bottom: calc(env(safe-area-inset-bottom, 0px) + 20px);
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: var(--green-deep);
+      color: var(--green-pale);
+      font-size: 12px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 10px 20px;
+      border-radius: 30px;
+      opacity: 0;
+      transition: opacity 0.3s, transform 0.3s;
+      pointer-events: none;
+      white-space: nowrap;
+      z-index: 100;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+
+  <div class="watch-header">
+    <svg class="watch-face-svg" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="sunray" cx="50%" cy="50%" r="60%">
+          <stop offset="0%" stop-color="#6ab88a" stop-opacity="0.7"/>
+          <stop offset="100%" stop-color="#1a3a2a" stop-opacity="0"/>
+        </radialGradient>
+        <clipPath id="dial-clip">
+          <rect x="30" y="30" width="100" height="100" rx="14"/>
+        </clipPath>
+      </defs>
+      <!-- Case -->
+      <rect x="14" y="14" width="132" height="132" rx="24" fill="#d0d0d0" stroke="#a0a0a0" stroke-width="0.5"/>
+      <!-- Bracelet lugs -->
+      <rect x="52" y="8" width="56" height="10" rx="4" fill="#c0c0c0" stroke="#989898" stroke-width="0.5"/>
+      <rect x="52" y="142" width="56" height="10" rx="4" fill="#c0c0c0" stroke="#989898" stroke-width="0.5"/>
+      <!-- Screws on bezel -->
+      <circle cx="28" cy="28" r="4.5" fill="#b8b8b8" stroke="#888" stroke-width="0.5"/>
+      <line x1="25.5" y1="28" x2="30.5" y2="28" stroke="#666" stroke-width="0.9"/>
+      <circle cx="132" cy="28" r="4.5" fill="#b8b8b8" stroke="#888" stroke-width="0.5"/>
+      <line x1="129.5" y1="28" x2="134.5" y2="28" stroke="#666" stroke-width="0.9"/>
+      <circle cx="28" cy="132" r="4.5" fill="#b8b8b8" stroke="#888" stroke-width="0.5"/>
+      <line x1="25.5" y1="132" x2="30.5" y2="132" stroke="#666" stroke-width="0.9"/>
+      <circle cx="132" cy="132" r="4.5" fill="#b8b8b8" stroke="#888" stroke-width="0.5"/>
+      <line x1="129.5" y1="132" x2="134.5" y2="132" stroke="#666" stroke-width="0.9"/>
+      <!-- Dial bg -->
+      <rect x="30" y="30" width="100" height="100" rx="14" fill="#2e5940"/>
+      <rect x="30" y="30" width="100" height="100" rx="14" fill="url(#sunray)" clip-path="url(#dial-clip)"/>
+      <!-- Inner bezel line -->
+      <rect x="40" y="40" width="80" height="80" rx="10" fill="none" stroke="#5aaa78" stroke-width="0.8" opacity="0.5"/>
+      <!-- Roman numerals -->
+      <text x="80" y="49" text-anchor="middle" font-family="Cormorant Garamond, serif" font-size="10" fill="#c8ddd0" font-weight="500">XII</text>
+      <text x="113" y="85" text-anchor="middle" font-family="Cormorant Garamond, serif" font-size="10" fill="#c8ddd0" font-weight="500">III</text>
+      <text x="80" y="118" text-anchor="middle" font-family="Cormorant Garamond, serif" font-size="10" fill="#c8ddd0" font-weight="500">VI</text>
+      <text x="47" y="85" text-anchor="middle" font-family="Cormorant Garamond, serif" font-size="10" fill="#c8ddd0" font-weight="500">IX</text>
+      <!-- Brand -->
+      <text x="80" y="72" text-anchor="middle" font-family="Cormorant Garamond, serif" font-size="7.5" fill="#c8ddd0" letter-spacing="1.5" font-weight="400">CARTIER</text>
+      <text x="80" y="96" text-anchor="middle" font-family="Josefin Sans, sans-serif" font-size="5.5" fill="#8ab8a0" letter-spacing="1">AUTOMATIC</text>
+      <!-- Hour hand -->
+      <line x1="80" y1="80" x2="80" y2="55" stroke="#e0e0e0" stroke-width="2.2" stroke-linecap="round"/>
+      <!-- Minute hand -->
+      <line x1="80" y1="80" x2="100" y2="80" stroke="#e0e0e0" stroke-width="1.6" stroke-linecap="round"/>
+      <!-- Center -->
+      <circle cx="80" cy="80" r="3" fill="#d0d0d0"/>
+      <!-- Crown -->
+      <rect x="144" y="73" width="9" height="14" rx="3.5" fill="#b8b8b8" stroke="#888" stroke-width="0.5"/>
+      <circle cx="148.5" cy="80" r="2.5" fill="#3a4a9a" opacity="0.85"/>
+    </svg>
+    <div class="watch-title">Santos de Cartier</div>
+    <div class="watch-ref">WSSA0062 · Cadran Vert · Large</div>
+  </div>
+
+  <div class="screws-row">
+    <div class="screw"></div><div class="screw"></div><div class="screw"></div>
+    <div class="screw"></div><div class="screw"></div><div class="screw"></div>
+  </div>
+
+  <!-- Progress -->
+  <div class="progress-section">
+    <div class="section-title">Progression de l'objectif</div>
+    <div class="progress-bezel">
+      <div class="progress-row">
+        <span class="progress-label">Réuni</span>
+        <span class="progress-pct" id="pct-display">0%</span>
+      </div>
+      <div class="progress-bar-track">
+        <div class="progress-bar-fill" id="progress-fill" style="width:0%"></div>
+      </div>
+      <div class="progress-bottom">
+        <span class="prog-amount" id="total-display">0 €</span>
+        <span class="prog-remain" id="remain-display">reste 8 000 €</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Wallets -->
+  <div class="wallets-grid">
+    <div class="wallet-card revolut">
+      <div class="wallet-icon">Revolut</div>
+      <div class="wallet-amount" id="revolut-display">0 €</div>
+      <div class="wallet-subtitle" id="revolut-pct">0% de l'objectif</div>
+    </div>
+    <div class="wallet-card cash">
+      <div class="wallet-icon">Espèces</div>
+      <div class="wallet-amount" id="cash-display">0 €</div>
+      <div class="wallet-subtitle" id="cash-pct">0% de l'objectif</div>
+    </div>
+  </div>
+
+  <!-- ETA -->
+  <div class="eta-badge">
+    <div class="eta-label">Date d'acquisition estimée</div>
+    <div class="eta-value" id="eta-display">—</div>
+  </div>
+
+  <!-- Add entry -->
+  <div class="input-section">
+    <div class="section-title">Ajouter un versement</div>
+    <div class="input-row">
+      <span class="input-label">Revolut</span>
+      <input type="number" id="revolut-input" placeholder="0" min="0" step="10" inputmode="decimal"/>
+    </div>
+    <div class="input-row">
+      <span class="input-label">Espèces</span>
+      <input type="number" id="cash-input" placeholder="0" min="0" step="10" inputmode="decimal"/>
+    </div>
+    <button class="add-btn" onclick="addEntry()">+ Enregistrer le versement</button>
+  </div>
+
+  <!-- Target -->
+  <div class="target-section">
+    <div class="section-title">Objectif (€)</div>
+    <div class="target-row">
+      <input type="number" id="target-input" value="8000" min="100" step="100" inputmode="decimal"/>
+      <button class="set-btn" onclick="updateTarget()">Mettre à jour</button>
+    </div>
+  </div>
+
+  <!-- History -->
+  <div class="history-section">
+    <div class="section-title">Journal des versements</div>
+    <div class="history-list" id="history-list">
+      <div class="no-history">Aucun versement enregistré</div>
+    </div>
+  </div>
+
+  <div class="screws-row">
+    <div class="screw"></div><div class="screw"></div><div class="screw"></div>
+    <div class="screw"></div><div class="screw"></div><div class="screw"></div>
+  </div>
+
+  <div class="motto" id="motto-text">« Le temps est la seule monnaie qui vaut la peine d'être investie. »</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  var state = { target: 8000, revolut: 0, cash: 0, entries: [] };
+
+  var mottos = [
+    '« Le temps est la seule monnaie qui vaut la peine d\'être investie. »',
+    '« Chaque versement rapproche l\'heure de la victoire. »',
+    '« La discipline aujourd\'hui, l\'élégance demain. »',
+    '« Alberto Santos Dumont lisait l\'heure en plein ciel. Toi, tu le feras au poignet. »',
+    '« L\'excellence n\'est pas un accident — c\'est un plan. »',
+    '« Une montre de cette qualité mérite une épargne de cette rigueur. »',
+    '« Chaque euro mis de côté est un rouage de plus dans le mouvement. »',
+    '« La patience est le ressort principal de toute belle mécanique. »'
+  ];
+
+  function fmt(n) {
+    return Math.round(n).toLocaleString('fr-FR') + '\u00a0€';
+  }
+
+  function showToast(msg) {
+    var t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(function() { t.classList.remove('show'); }, 2200);
+  }
+
+  function load() {
+    try {
+      var s = localStorage.getItem('santos_v2');
+      if (s) state = JSON.parse(s);
+    } catch(e) {}
+    render();
+  }
+
+  function save() {
+    try { localStorage.setItem('santos_v2', JSON.stringify(state)); } catch(e) {}
+  }
+
+  function updateTarget() {
+    var v = parseFloat(document.getElementById('target-input').value);
+    if (v && v > 0) {
+      state.target = v;
+      save(); render();
+      showToast('Objectif mis à jour');
+    }
+  }
+
+  function addEntry() {
+    var rv = parseFloat(document.getElementById('revolut-input').value) || 0;
+    var ca = parseFloat(document.getElementById('cash-input').value) || 0;
+    if (rv <= 0 && ca <= 0) { showToast('Saisir un montant'); return; }
+    state.entries.unshift({
+      id: Date.now(), revolut: rv, cash: ca,
+      date: new Date().toLocaleDateString('fr-FR', {day:'2-digit', month:'short', year:'numeric'})
+    });
+    state.revolut += rv;
+    state.cash += ca;
+    document.getElementById('revolut-input').value = '';
+    document.getElementById('cash-input').value = '';
+    save(); render();
+    rotateMotto();
+    var total = state.revolut + state.cash;
+    if (total >= state.target) {
+      showToast('🎉 Objectif atteint !');
+    } else {
+      showToast('Versement enregistré');
+    }
+  }
+
+  function deleteEntry(id) {
+    var idx = state.entries.findIndex(function(e){ return e.id === id; });
+    if (idx === -1) return;
+    var e = state.entries[idx];
+    state.revolut = Math.max(0, state.revolut - e.revolut);
+    state.cash = Math.max(0, state.cash - e.cash);
+    state.entries.splice(idx, 1);
+    save(); render();
+    showToast('Versement supprimé');
+  }
+
+  function rotateMotto() {
+    var el = document.getElementById('motto-text');
+    el.style.opacity = '0';
+    setTimeout(function() {
+      el.textContent = mottos[Math.floor(Math.random() * mottos.length)];
+      el.style.opacity = '1';
+    }, 350);
+  }
+
+  function computeETA() {
+    var total = state.revolut + state.cash;
+    if (total >= state.target) return 'Objectif atteint\u00a0!';
+    if (state.entries.length < 2) return 'Versements insuffisants';
+    var sorted = state.entries.slice().sort(function(a,b){ return a.id - b.id; });
+    var days = Math.max(1, (sorted[sorted.length-1].id - sorted[0].id) / 86400000);
+    var rate = total / days;
+    if (rate <= 0) return '—';
+    var eta = new Date(Date.now() + Math.ceil((state.target - total) / rate) * 86400000);
+    return eta.toLocaleDateString('fr-FR', {month:'long', year:'numeric'});
+  }
+
+  function render() {
+    var total = state.revolut + state.cash;
+    var pct = Math.min(100, Math.round(total / state.target * 100));
+    var remain = Math.max(0, state.target - total);
+
+    document.getElementById('pct-display').textContent = pct + '%';
+    document.getElementById('progress-fill').style.width = pct + '%';
+    document.getElementById('total-display').textContent = fmt(total);
+    document.getElementById('remain-display').textContent = remain > 0 ? 'reste\u00a0' + fmt(remain) : 'Objectif atteint\u00a0!';
+    document.getElementById('revolut-display').textContent = fmt(state.revolut);
+    document.getElementById('cash-display').textContent = fmt(state.cash);
+    var rpct = state.target > 0 ? Math.round(state.revolut / state.target * 100) : 0;
+    var cpct = state.target > 0 ? Math.round(state.cash / state.target * 100) : 0;
+    document.getElementById('revolut-pct').textContent = rpct + '% de l\'objectif';
+    document.getElementById('cash-pct').textContent = cpct + '% de l\'objectif';
+    document.getElementById('target-input').value = state.target;
+    document.getElementById('eta-display').textContent = computeETA();
+
+    var list = document.getElementById('history-list');
+    if (!state.entries.length) {
+      list.innerHTML = '<div class="no-history">Aucun versement enregistré</div>';
+      return;
+    }
+    list.innerHTML = state.entries.slice(0, 30).map(function(e) {
+      var lines = '';
+      if (e.revolut > 0) lines += '<div class="history-line"><div class="history-left"><div class="history-dot dot-revolut"></div><span class="history-desc">Revolut</span></div><span class="history-amount">+' + fmt(e.revolut) + '</span></div>';
+      if (e.cash > 0) lines += '<div class="history-line"><div class="history-left"><div class="history-dot dot-cash"></div><span class="history-desc">Espèces</span></div><span class="history-amount">+' + fmt(e.cash) + '</span></div>';
+      return '<div class="history-item"><div class="history-header"><span class="history-date">' + e.date + '</span><button class="delete-btn" onclick="deleteEntry(' + e.id + ')">×</button></div>' + lines + '</div>';
+    }).join('');
+  }
+
+  load();
+</script>
+</body>
+</html>
